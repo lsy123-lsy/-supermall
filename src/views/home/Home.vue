@@ -1,12 +1,17 @@
 <template>
   <div id="home">
     <nav-bar class="home-bar"><div slot="middle">购物街</div></nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
-    <home-recommmend-view :recommends="recommends"></home-recommmend-view>
-    <feature-view></feature-view>
-    <tab-control class="tab-control" :titles="['流行','新款','精选']"
-      @tabClick="tabClick"></tab-control>
-    <goods-list :goods="showGoods"></goods-list>
+
+    <scroll class="content" ref="scroll" :probe-type="3" 
+      @scroll="contentScroll" :pull-up-load="true">
+      <home-swiper :banners="banners"></home-swiper>
+      <home-recommmend-view :recommends="recommends"></home-recommmend-view>
+      <feature-view></feature-view>
+      <tab-control class="tab-control" :titles="['流行','新款','精选']"
+        @tabClick="tabClick"></tab-control>
+      <goods-list :goods="showGoods"></goods-list>
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -14,6 +19,8 @@
 import NavBar from '@/components/common/navbar/NavTab'
 import TabControl from '@/components/content/tabControl/TabControl'
 import GoodsList from '@/components/content/goods/GoodsList'
+import Scroll from '@/components/common/scroll/Scroll'
+import BackTop from '@/components/content/backTop/BackTop'
 
 import HomeSwiper from './childComps/HomeSwiper'
 import HomeRecommmendView from './childComps/HomeRecommmendView'
@@ -31,7 +38,9 @@ export default {
     HomeRecommmendView,
     FeatureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
   data(){
     return {
@@ -42,7 +51,8 @@ export default {
         'new':{page:0,list:[]},
         'sell':{page:0,list:[]},
       },
-      cuurentType:'pop'
+      cuurentType:'pop',
+      isShowBackTop:false
     }
   },
   computed: {
@@ -76,6 +86,15 @@ export default {
             break
         }
       },
+      backClick(){
+        // x,y,毫秒
+        // 相当于this.$refs.scroll.message
+        this.$refs.scroll.scrollTo(0,0,500)
+      },
+      contentScroll(position){
+        console.log(position)
+        this.isShowBackTop = (-position.y) > 1000
+      },
     /*
       网络请求 */
     getHomeMultidata(){
@@ -98,7 +117,7 @@ export default {
   
 }
 </script>
-
+<!-- scoped作用域 -->
 <style scoped>
 #home{
   padding-top: 44px;
@@ -118,6 +137,10 @@ export default {
     /* sticky有两个属性，当满足条件时会变为fixed，但有时候不兼容 */
     position: sticky;
     top: 44px;
-    z-index: 20;
+    z-index: 8;
+  }
+  .content{
+    height: calc(100vh - 93px);
+    overflow: hidden;
   }
 </style>
