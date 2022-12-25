@@ -6,6 +6,7 @@ const Home = () => import('../views/home/Home.vue')
 const Cart = () => import('../views/cart/Cart.vue')
 const Category = () => import('../views/category/Category.vue')
 const Profile = () => import('../views/profile/Profile.vue')
+const Detail = () => import('../views/detail/Detail.vue')
 
 // 1. 挂载
 Vue.use(VueRouter)
@@ -17,19 +18,36 @@ const routes = [
   },
   {
     path:'/home',
-    component:Home
+    component:Home,
+    // 设置导航栏是否显示
+    meta:{
+      footShow:true
+    }
   },
   {
     path:'/cart',
-    component:Cart
+    component:Cart,
+    meta:{
+      footShow:true
+    }
   },
   {
     path:'/category',
-    component:Category
+    component:Category,
+    meta:{
+      footShow:true
+    }
   },
   {
     path:'/profile',
-    component:Profile
+    component:Profile,
+    meta:{
+      footShow:true
+    }
+  },
+  {
+    path:'/detail/:iid',
+    component:Detail
   }
 ]
 const router = new VueRouter({

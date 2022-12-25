@@ -1,12 +1,10 @@
 <template>
-    <div swiper>
-      <swiper>
-        <swiper-item v-for="(item,index) in banners" :key="index">
-          <a :href="item.link">
-          <img :src="item.image" alt=""></a>
-        </swiper-item>
-    </swiper>
-    </div>
+  <swiper>
+    <swiper-item v-for="(item,index) in banners" :key="index">
+      <a :href="item.link">
+      <img :src="item.image" @load="imageLoad"></a>
+      </swiper-item>
+  </swiper>
 </template>
 
 <script>
@@ -17,11 +15,26 @@ export default {
     Swiper,
     SwiperItem
   },
+  data() {
+    return {
+      isLoad:false
+    }
+  },
   props:{
     banners:{
       type:Array,
       default(){
         return []
+      }
+    },
+    methods: {
+      imageLoad(){
+        console.log(isLoad)
+        // 会发出四次事件，所以设置一下只发出一次
+        if(!this.isLoad)
+        console.log("轮播图加载完成")
+          this.$emit('swiperImageLoad')
+          this.isLoad = true
       }
     }
   }
