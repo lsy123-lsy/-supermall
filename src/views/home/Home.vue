@@ -4,7 +4,7 @@
 
     <tab-control class="tab-control" :titles="['流行','新款','精选']"
         @tabClick="tabClick"
-        ref="tabControl1"
+        ref="topTabControl"
         v-show="isTabFixed"></tab-control>
 
     <scroll class="content" ref="scroll" 
@@ -18,7 +18,7 @@
       <feature-view></feature-view>
       <tab-control class="tab-control" :titles="['流行','新款','精选']"
         @tabClick="tabClick"
-        ref="tabControl2"></tab-control>
+        ref="tabControl"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
@@ -39,6 +39,7 @@ import FeatureView from './childComps/FeatureView'
 
 import {getHomeMultidata,getHomeGoods} from '@/network/home'
 import {debounce} from '@/common/utils'
+import {itemListenerMixin,backTopMixin} from '@/common/mixin'
 
 
 export default {
@@ -53,6 +54,7 @@ export default {
     Scroll,
     BackTop
   },
+  mixins:[itemListenerMixin,backTopMixin],
   data(){
     return {
       banners:[],
@@ -65,7 +67,9 @@ export default {
       cuurentType:'pop',
       isShowBackTop:false,
       tabOffsetTop:0,
-      isTabFixed: false
+      isTabFixed: false,
+      saveY: 0,
+      homeImgListerner: null
     }
   },
   computed: {
@@ -89,7 +93,7 @@ export default {
     this.saveY = this.$refs.scroll.getScrollY()
 
     // 2. 取消全局事件的监听
-    this.$bus.$off('itemImageLoad',this.itemImageListener)
+    this.$bus.$off('itemImgLoad',this.itemImgListener)
   },
   // 创建之后开始进行网络请求
   created(){
@@ -104,13 +108,13 @@ export default {
   mounted(){
       // 1.监听图片加载完毕,利用防抖
       // 组件一旦创建完成，并且挂在监听事件总线里的itemImageLoad（图片加载完成事件）然后刷新scrollHeight高度
-      const refresh = debounce(this.$refs.scroll.refresh,500)
+      // const refresh = debounce(this.$refs.scroll.refresh,500)
 
-      // 对监听事件进行保存
-      this.itemImageListener = () => {
-        refresh()
-      }
-      this.$bus.$on('itemImageLoad',this.itemImageListener)
+      // // 对监听事件进行保存
+      // this.itemImgListener = () => {
+      //   newRefresh(20,30,'abc')
+      // }
+      // this.$bus.$on('itemImgLoad',this.itemImgListener)
 
   },
   methods:{
@@ -132,16 +136,17 @@ export default {
             this.cuurentType = 'sell'
             break
         }
-        this.$refs.tabControl1.cuurentIndex = index
-        this.$refs.tabControl2.cuurentIndex = index
-        console.log(this.$refs.tabControl1.cuurentIndex)
-        console.log(this.$refs.tabControl2.cuurentIndex)
+
+        // 让两个tabcontrol的cuurentindex保持一致
+        this.$refs.topTabControl.currentIndex = index
+        this.$refs.tabControl.currentIndex = index
       },
-      backClick(){
-        // x,y,毫秒
-        // 相当于this.$refs.scroll.message
-        this.$refs.scroll.scrollTo(0,0,500)
-      },
+      // 被抽取到混入里
+      // backClick(){
+      //   // x,y,毫秒
+      //   // 相当于this.$refs.scroll.message
+      //   this.$refs.scroll.scrollTo(0,0,500)
+      // },
       contentScroll(position){
         // console.log(position)
         // 1.backTop是否显示
@@ -157,8 +162,8 @@ export default {
       swiperImageLoad(){
         // 2.获取tabcontrol的offsettop
         // this.$refs.tabControl拿到的为组件不是元素，所有的组件都有属性$el,获得组件下的元素
-        this.tabOffSetTop = this.$refs.tabControl2.$el.offsetTop
-        console.log(this.$refs.tabControl2.$el.offsetTop)
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+        console.log(this.$refs.tabControl.$el.offsetTop)
       },
       getScrollY() {
         return this.scroll ? this.scroll.y : 0

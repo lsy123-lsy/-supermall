@@ -12,6 +12,7 @@ import BScroll from 'better-scroll'
 export default {
   name:"Scroll",
   props:{
+    // 是否显示位置
     probeType:{
       type:Number,
       default:0
