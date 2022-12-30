@@ -18,8 +18,12 @@ export default {
       default:0
     },
     pullUpLoad:{
-      type :Boolean,
+      type:Boolean,
       default:false
+    },
+    click: {
+      type:Boolean,
+      default:true
     }
   },
 
