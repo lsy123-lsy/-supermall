@@ -13,6 +13,7 @@
     </scroll>
     <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
     <detail-botton-bar @addCart="addToCart"></detail-botton-bar>
+    <toast :message="message" :show="show"></toast>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import DetailCommentInfo from './childComps/DetailCommentInfo'
 import DetailBottonBar from './childComps/DetailBottonBar'
 import scroll from '@/components/common/scroll/Scroll'
 import GoodsList from '@/components/content/goods/GoodsList'
+import Toast from '@/components/common/toast/Toast'
 
 import {getDetail,Goods,Shop,GoodsParam,getRecommend} from '@/network/detail'
 import { debounce } from '@/common/utils'
@@ -44,7 +46,8 @@ export default {
         DetailCommentInfo,
         DetailParamsInfo,
         DetailBottonBar,
-        GoodsList
+        GoodsList,
+        Toast
     },
     mixins: [itemListenerMixin,backTopMixin],
     data(){
@@ -58,7 +61,9 @@ export default {
             commentInfo: {},
             recommends: [],
             themeTopYs:[],
-            getThemeTopY: null
+            getThemeTopY: null,
+            message: '' , //toast信息
+            show: false  //是否显示toast
         }
     },
     created() {
@@ -202,7 +207,20 @@ export default {
             product.iid = this.iid
 
             // 将商品添加到购物车内
-            this.$store.dispatch('addCart',product)
+            // dispatch可以返回promise
+            this.$store.dispatch('addCart',product).then(res => {
+                // 1. 未封装的方式
+                // this.show = true
+                // this.message = res
+                // setTimeout(() => {
+                //     this.show = false
+                //     this.message = ''
+                // },1500)
+
+                // 2. 封装
+                this.$toast.show(res,2000)
+                console.log(res)
+            })
         }
     }
 }

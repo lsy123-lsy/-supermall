@@ -8,7 +8,7 @@
     <div class="price">
       合计：{{totalPrice}}
     </div>
-    <div class="calculate">
+    <div class="calculate" @click="calcClick">
       去计算({{checkLength}})
     </div>
   </div>
@@ -52,6 +52,12 @@ export default {
       } else{  //有未选中
         this.cartList.forEach(item => item.checked = true)
       }
+    },
+    // 去计算点击事件
+    calcClick(){
+      // if(!this.isSelectAll){
+      //   this.
+      // }
     }
   }
 }
