@@ -2,7 +2,8 @@
   <swiper>
     <swiper-item v-for="(item,index) in banners" :key="index">
       <a :href="item.link">
-      <img :src="item.image" @load="imageLoad"></a>
+        <img :src="item.image" @load="imageLoad">
+      </a>
       </swiper-item>
   </swiper>
 </template>
@@ -30,9 +31,10 @@ export default {
     methods: {
       imageLoad(){
         console.log(isLoad)
+        console.log('资源加载完毕')
         // 会发出四次事件，所以设置一下只发出一次
         if(!this.isLoad)
-        console.log("轮播图加载完成")
+          console.log("轮播图加载完成")
           this.$emit('swiperImageLoad')
           this.isLoad = true
       }
